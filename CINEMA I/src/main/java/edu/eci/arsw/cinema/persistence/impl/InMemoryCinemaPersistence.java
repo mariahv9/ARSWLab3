@@ -46,7 +46,8 @@ public class InMemoryCinemaPersistence implements CinemaPersitence{
             boolean notfounded = true;
             for (int i=0;i<c.getFunctions().size() && notfounded ;i++) {
 
-                if (c.getFunctions().get(i).getMovie().getName().equals(movieName) && c.getFunctions().get(i).getDate().equals(date)) {
+                if (c.getFunctions().get(i).getMovie().getName().equals(movieName)
+                        && c.getFunctions().get(i).getDate().equals(date)) {
 
                     c.getFunctions().get(i).buyTicket(row,col);
                     notfounded = false;

@@ -26,8 +26,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CinemaServices {
-
-
     final String a = "filterOfGenre";
 
     @Autowired
