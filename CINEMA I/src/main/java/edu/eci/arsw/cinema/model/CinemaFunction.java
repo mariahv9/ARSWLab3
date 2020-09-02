@@ -41,6 +41,22 @@ public class CinemaFunction {
             throw new CinemaException("Seat booked");
         }
     }
+
+    public int getSeatsState(Boolean state){
+        int freeSeats = 0;
+        for (List<Boolean> row : seats){
+
+            for (Boolean seat : row){
+
+                if (seat == state){
+                    freeSeats ++;
+                }
+            }
+        }
+
+        return freeSeats;
+    }
+
     
     public List<List<Boolean>> getSeats() {
         return this.seats;

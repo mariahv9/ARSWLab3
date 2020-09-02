@@ -11,15 +11,17 @@ import edu.eci.arsw.cinema.model.Movie;
 import edu.eci.arsw.cinema.persistence.CinemaException;
 import edu.eci.arsw.cinema.persistence.CinemaPersistenceException;
 import edu.eci.arsw.cinema.persistence.CinemaPersitence;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 /**
  *
  * @author cristian
  */
+@Component
+@Qualifier("InMemoryCinemaPersistence")
 public class InMemoryCinemaPersistence implements CinemaPersitence{
     
     private final Map<String,Cinema> cinemas=new HashMap<>();
@@ -38,12 +40,44 @@ public class InMemoryCinemaPersistence implements CinemaPersitence{
 
     @Override
     public void buyTicket(int row, int col, String cinema, String date, String movieName) throws CinemaException {
-        throw new UnsupportedOperationException("Not supported yet."); 
+
+        Cinema c = getCinema(cinema);
+        if(c!=null) {
+            boolean notfounded = true;
+            for (int i=0;i<c.getFunctions().size() && notfounded ;i++) {
+
+                if (c.getFunctions().get(i).getMovie().getName().equals(movieName) && c.getFunctions().get(i).getDate().equals(date)) {
+
+                    c.getFunctions().get(i).buyTicket(row,col);
+                    notfounded = false;
+                }
+            }
+
+            if(notfounded) {
+                throw new CinemaException("Movie,Date or Position non-existent");
+            }
+        }else {
+            throw new CinemaException("Cinema non-existent");
+        }
     }
 
     @Override
-    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public List<CinemaFunction> getFunctionsbyCinemaAndDate(String cinema, String date)  {
+        Cinema c = getCinema(cinema);
+        if(c!=null) {
+            List<CinemaFunction> listc = new ArrayList<>();
+
+            for (CinemaFunction function : c.getFunctions()) {
+
+                if (function.getDate().equals(date)) {
+                    listc.add(function);
+                }
+            }
+
+            return listc;
+        }else {
+            return null;
+        }
     }
 
     @Override
@@ -57,8 +91,13 @@ public class InMemoryCinemaPersistence implements CinemaPersitence{
     }
 
     @Override
-    public Cinema getCinema(String name) throws CinemaPersistenceException {
+    public Cinema getCinema(String name){
         return cinemas.get(name);
+    }
+
+    @Override
+    public Set<Cinema> getAllCinema() {
+        return (Set<Cinema>) cinemas;
     }
 
 }
